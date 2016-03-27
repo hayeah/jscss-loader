@@ -10,8 +10,10 @@
   },
 
   "files": [
-    "register-require.ts",
-    "jss-loader.ts",
+    "ts-require.ts",
+    "webpackLoader.ts",
+    "index.ts",
+    "compileJSS.ts",
     "ExtractPlugin.ts",
     "global-shim.d.ts"
   ]

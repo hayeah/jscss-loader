@@ -1,15 +1,15 @@
 "use strict";
 
-import { compileJSS } from "./index";
+import { compileJSS } from "./compileJSS";
 
 import * as path from "path";
 
 import { cssChunks } from "./index";
 
-// regiser require hook to load typescript files.
-import "./register-require";
+// Register require hook to load typescript files.
+import "./ts-require";
 
-module.exports = function(content) {
+export function webpackLoader(content: string) {
   const { context, resourcePath, request } = this as LoaderContext;
 
   const modulePath = path.relative(context, resourcePath)
