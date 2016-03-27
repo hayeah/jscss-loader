@@ -1,3 +1,6 @@
+const transformSpecificationIntoCSS = require("react-inline/lib/transformSpecificationIntoCSS").default;
+const transformStyleSheetObjectIntoSpecification = require("react-inline/lib/transformStyleSheetObjectIntoSpecification").default;
+
 interface StyleSheet {
   [key: string]: any;
 }
@@ -22,8 +25,8 @@ export function compileJSS(jss: StyleSheet, prefix?: string): { classes: ClassNa
   const normalizedPrefix = prefix.replace(/[.\/ ]/, "-");
 
   const classes: ClassNames = {};
-  for(let key of Object.keys(jss)) {
-    if(key.charAt(0) === "@") {
+  for (let key of Object.keys(jss)) {
+    if (key.charAt(0) === "@") {
       continue;
     }
 
@@ -38,8 +41,3 @@ export function compileJSS(jss: StyleSheet, prefix?: string): { classes: ClassNa
     css,
   };
 }
-
-const transformSpecificationIntoCSS = require("react-inline/lib/transformSpecificationIntoCSS").default;
-const transformStyleSheetObjectIntoSpecification = require("react-inline/lib/transformStyleSheetObjectIntoSpecification").default;
-
-

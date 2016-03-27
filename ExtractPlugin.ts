@@ -1,10 +1,4 @@
-// export function ExtractPlugin(options) {
-//   // Configure your plugin with options...
-// }
-
-const RawSource = require("webpack-sources").RawSource;
-// new RawSource(sourceCode: String)
-
+const { RawSource } = require("webpack-sources");
 import { cssChunks } from "./index";
 
 export class ExtractPlugin {
