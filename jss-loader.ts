@@ -15,7 +15,9 @@ module.exports = function(content) {
   const modulePath = path.relative(context, resourcePath)
 
   // avoid webpack's fancy dynamic require handling
-  const jss = require(this.resourcePath).default;
+  const mod = require(this.resourcePath);
+  // CommonJS & ES6 compat
+  const jss = mod.default || mod;
 
   const { css, classes } = compileJSS(jss, modulePath);
 

@@ -36,6 +36,26 @@ function Foo() {
 }
 ```
 
+## CommonJS
+
+JavaScript is not transpiled with Babel because Babel is too large a dependency to include in this library. Avoid writing JavaScript using ES6 features that NodeJS doesn't support yet.
+
+```js
+const constants = require("./constants");
+const colors = require("./colors");
+
+module.exports = {
+  container: {
+    width: constants.width,
+    height: constants.height,
+  },
+
+  title: {
+    color: colors/gray,
+  },
+};
+```
+
 # Webpack Configuration
 
 ```js
