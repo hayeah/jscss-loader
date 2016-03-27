@@ -51,7 +51,7 @@ module.exports = {
   },
 
   title: {
-    color: colors/gray,
+    color: colors.gray,
   },
 };
 ```
