@@ -15,7 +15,15 @@ export class ExtractPlugin {
 
         for(let chunk of chunks) {
           const { name, modules } = chunk;
-          const stylesheet = modules.map(mod => cssChunks[mod.request]).join("\n");
+
+          const cssParts = [];
+          for(let mod of modules) {
+            const css = cssChunks[mod.request];
+            if (css) {
+              cssParts.push(css);
+            }
+          }
+          const stylesheet = cssParts.join("\n");
           this.assets[`${name}.css`] = new RawSource(stylesheet);
         }
 
