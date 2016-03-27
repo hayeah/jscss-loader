@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es3",
+    "jsx": "react",
+    "experimentalDecorators": true,
+    "allowJs": true,
+    "outDir": "lib",
+    "noLib": true
+  },
+
+  "files": [
+    "register-require.ts",
+    "jss-loader.ts",
+    "ExtractPlugin.ts",
+    "global-shim.d.ts"
+  ]
+}
