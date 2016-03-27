@@ -11,7 +11,6 @@ import "./register-require";
 
 module.exports = function(content) {
   const { context, resourcePath, request } = this as LoaderContext;
-  console.log("jss loader");
 
   const modulePath = path.relative(context, resourcePath)
 
