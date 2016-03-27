@@ -11,8 +11,14 @@ export class ExtractPlugin {
 
       compilation.plugin("additional-assets", function(callback) {
         // console.log("additional-assets");
-        const css = cssChunks.join("\n");
-        this.assets["bundle.css"] = new RawSource(css);
+        const { chunks } = this as Compilation;
+
+        for(let chunk of chunks) {
+          const { name, modules } = chunk;
+          const stylesheet = modules.map(mod => cssChunks[mod.request]).join("\n");
+          this.assets[`${name}.css`] = new RawSource(stylesheet);
+        }
+
         callback();
       });
     });
@@ -27,4 +33,35 @@ export class ExtractPlugin {
        });
     });
   }
+}
+
+interface Compilation {
+  fullHash: string,
+  hash: string,
+  modules: NormalModule[],
+  chunks: Chunk[],
+}
+
+interface Chunk {
+  name: string,
+  entry: boolean,
+  files: string[],
+  modules: NormalModule[],
+  hash: string,
+  renderedHash: string,
+}
+
+interface NormalModule {
+  // "/Users/howard/p/jss/test"
+  context: string,
+  // "./b.css.ts"
+  rawRequest: string,
+  // "/Users/howard/p/jss/lib/jss-loader.js!/Users/howard/p/jss/test/b.css.ts"
+  request: string,
+  // meta
+  // meta: { [key: string]: any }
+
+  // wtf is this?
+  // cacheable
+
 }

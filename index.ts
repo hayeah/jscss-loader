@@ -11,7 +11,9 @@ let idCounter = 0;
 
 type ClassNames = { [key: string]: string };
 
-export let cssChunks = [];
+type CSSChunks = { [key: string]: string };
+
+export let cssChunks: CSSChunks = {};
 
 export function compileJSS(jss: StyleSheet, prefix?: string): { classes: ClassNames, css: string } {
   if (prefix == null) {
