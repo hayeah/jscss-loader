@@ -1,6 +1,8 @@
 const transformSpecificationIntoCSS = require("react-inline/lib/transformSpecificationIntoCSS").default;
 const transformStyleSheetObjectIntoSpecification = require("react-inline/lib/transformStyleSheetObjectIntoSpecification").default;
 
+export { ExtractPlugin } from "./ExtractPlugin";
+
 interface StyleSheet {
   [key: string]: any;
 }
