@@ -1,5 +1,5 @@
 const { RawSource } = require("webpack-sources");
-import { cssChunks } from "./index";
+import { cssChunks } from "./webpackLoader";
 
 export class ExtractPlugin {
   apply(compiler) {

@@ -4,7 +4,9 @@ import { compileJSS } from "./compileJSS";
 
 import * as path from "path";
 
-import { cssChunks } from "./index";
+type CSSChunks = { [key: string]: string };
+
+export let cssChunks: CSSChunks = {};
 
 // Register require hook to load typescript files.
 import "./ts-require";

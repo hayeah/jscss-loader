@@ -1,8 +1,8 @@
-export { ExtractPlugin } from "./ExtractPlugin";
+import { ExtractPlugin } from "./ExtractPlugin";
 import { webpackLoader } from "./webpackLoader";
-export default webpackLoader;
 
-type CSSChunks = { [key: string]: string };
+Object.assign(webpackLoader, {
+  ExtractPlugin,
+});
 
-export let cssChunks: CSSChunks = {};
-
+module.exports = webpackLoader;
