@@ -6,3 +6,8 @@
 
 declare const __moduledir: string;
 declare const __outputdir: string;
+
+declare module "foreach" {
+  function foreach(dict: any, fn: (value: any, key: string) => void);
+  export = foreach;
+}

@@ -15,6 +15,12 @@
     "index.ts",
     "compileJSS.ts",
     "ExtractPlugin.ts",
-    "global-shim.d.ts"
+    "global-shim.d.ts",
+    "sandbox.ts",
+    "jss/transformStyleSheetObjectIntoSpecification.ts",
+    "jss/transformSpecificationIntoCSS.ts",
+    "jss/splitSelector.ts",
+    "jss/buildCSSRule.ts"
+
   ]
 }

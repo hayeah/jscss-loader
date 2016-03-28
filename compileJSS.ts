@@ -1,5 +1,5 @@
-const transformSpecificationIntoCSS = require("react-inline/lib/transformSpecificationIntoCSS").default;
-const transformStyleSheetObjectIntoSpecification = require("react-inline/lib/transformStyleSheetObjectIntoSpecification").default;
+import transformSpecificationIntoCSS from "./jss/transformSpecificationIntoCSS";
+import transformStyleSheetObjectIntoSpecification from "./jss/transformStyleSheetObjectIntoSpecification";
 
 interface StyleSheet {
   [key: string]: any;
