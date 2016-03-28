@@ -1,39 +1,38 @@
-const { RawSource } = require("webpack-sources");
+const { RawSource, ConcatSource } = require("webpack-sources");
 import { cssChunks } from "./webpackLoader";
 
 export class ExtractPlugin {
   apply(compiler) {
-    compiler.plugin("this-compilation", compilation => {
-      // compilation.plugin("normal-module-loader", (loaderContext, module) => {
-      //   console.log(module.request);
-      //   console.log("normal-module-loader", module);
-      // });
+    compiler.plugin("emit", function (compilation: Compilation, next) {
+      const { chunks, assets } = compilation;
 
-      compilation.plugin("additional-assets", function(callback) {
-        // console.log("additional-assets");
-        const { chunks } = this as Compilation;
+      for(let chunk of chunks) {
+        const { name, modules } = chunk;
 
-        for(let chunk of chunks) {
-          const { name, modules } = chunk;
-
-          const cssParts = [];
-          for(let mod of modules) {
-            const css = cssChunks[mod.request];
-            if (css) {
-              cssParts.push(css);
-            }
+        const cssParts = [];
+        for(let mod of modules) {
+          const css = cssChunks[mod.request];
+          if (css) {
+            cssParts.push(css);
           }
-          const stylesheet = cssParts.join("\n");
-          this.assets[`${name}.css`] = new RawSource(stylesheet);
+        }
+        const stylesheet = cssParts.join("\n");
+        let source = new RawSource(stylesheet);
+
+        // Avoid other extracted css asset (e.g. from ExtractTextPlugin)
+        let previousSource = assets[`${name}.css`];
+        if (previousSource) {
+          source = new ConcatSource(previousSource, "\n", source);
+          // previousSource should be a ConcatSource
+          // previousSource.add("\n");
+          // previousSource.add(source);
+          // source = previousSource;
         }
 
-        callback();
-      });
+        assets[`${name}.css`] = source;
+        next();
+      }
     });
-
-    // compiler.plugin("after-compile", compilation => {
-    //   console.log("after-compile");
-    // });
 
     compiler.plugin('compilation', function(compilation) {
        compilation.chunkTemplate.plugin('render', function(modules, chunk){
@@ -48,6 +47,7 @@ interface Compilation {
   hash: string,
   modules: NormalModule[],
   chunks: Chunk[],
+  assets: { [key: string]: any }
 }
 
 interface Chunk {
