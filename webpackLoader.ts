@@ -45,7 +45,9 @@ export function webpackLoader(content: string) {
   // CommonJS & ES6 compat
   const jss = mod.default || mod;
 
-  const { css, classes } = compileJSS(jss, modulePath);
+  const moduleName = modulePath.replace(/\.css\.(ts|js)$/,"");
+
+  const { css, classes } = compileJSS(jss, moduleName);
 
   cssChunks[request] = css;
 

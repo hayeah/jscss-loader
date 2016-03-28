@@ -21,7 +21,7 @@ export function compileJSS(jss: StyleSheet, prefix?: string): { classes: ClassNa
 
   styleSheets[prefix] = jss;
 
-  const normalizedPrefix = prefix.replace(/[.\/ ]/, "-");
+  const normalizedPrefix = prefix.replace(/[.\/ ]/g, "-");
 
   const classes: ClassNames = {};
   for (let key of Object.keys(jss)) {

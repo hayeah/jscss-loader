@@ -1,4 +1,4 @@
-import { pi } from "./pi";
+import { pi } from "./constants";
 
 export default {
   button: {
