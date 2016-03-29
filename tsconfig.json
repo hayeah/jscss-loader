@@ -13,7 +13,6 @@
     "ts-require.ts",
     "webpackLoader.ts",
     "index.ts",
-    "compileJSS.ts",
     "ExtractPlugin.ts",
     "global-shim.d.ts",
     "sandbox.ts",

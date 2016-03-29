@@ -8,6 +8,7 @@ const selfRuleRE = /^& /;
 const mediaQueryRE = /^@/;
 const pseudoElementRE = /^:/;
 const nonLocalClassNameRE = /^\./;
+const multiSelectorRE = /,/;
 
 import { buildCSSRule } from "./utils/buildCSSRule";
 
@@ -25,20 +26,30 @@ export function compileJSS(jss: JSSStyleSheet, prefix: string) {
   let classNames: { [key: string]: string } = {};
 
   foreach(jss, (rule: Rule, key: string) => {
-    compileClass(key, rule);
+    compileRule(key, rule);
   });
 
-  function compileClass(key: string, rule: Rule) {
-    let selector: string = null;
+  function compileRule(key: string, rule: Rule) {
+    let selectors: string[] = [];
 
-    if(!nonLocalClassNameRE.test(key)) {
-      const name = className(key);
-      classNames[key] = name;
 
-      selector = `.${name}`
+    if(multiSelectorRE.test(key)) {
+      selectors = key.split(",").map(str => str.trim());
     } else {
-      selector = key;
+      selectors = [key];
     }
+
+    // rename local classes
+    selectors = selectors.map(selector => {
+      if(nonLocalClassNameRE.test(selector)) {
+        return selector;
+      } else {
+        const localName = className(selector);
+        classNames[selector] = localName;
+
+        return`.${localName}`;
+      }
+    });
 
     const selfRules: JSSStyleSheet = {};
     const pseudoElements: JSSStyleSheet = {};
@@ -59,19 +70,21 @@ export function compileJSS(jss: JSSStyleSheet, prefix: string) {
 
       // other
       properties[key] = value;
-
     });
 
-    outputRule(selector, properties);
+    // const selector = selectors.join(", ")
+
+    outputRule(selectors.join(", "), properties);
 
     foreach(pseudoElements, (rule, pseudo) => {
-      outputRule(`${selector}${pseudo}`, rule);
+      let multiSelector = selectors.map(selector => `${selector}${pseudo}`).join("," )
+      outputRule(multiSelector, rule);
     });
 
-    foreach(selfRules, (rule, key) => {
-      const childSelector = key.slice(2);
-      outputRule(`${selector} ${childSelector}`, rule);
-    });
+    // foreach(selfRules, (rule, key) => {
+    //   const childSelector = key.slice(2);
+    //   outputRule(`${selector} ${childSelector}`, rule);
+    // });
 
 
 
@@ -101,11 +114,7 @@ export function compileJSS(jss: JSSStyleSheet, prefix: string) {
   }
 
   function className(name: string): string {
-    if (prefix) {
-      return `${prefix}_${name}`
-    } else {
-      return name;
-    }
+    return `${prefix}_${name}`;
   }
 
 
