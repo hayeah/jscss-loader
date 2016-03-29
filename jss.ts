@@ -7,6 +7,7 @@ type Rule = { [key: string]: Value };
 const selfRuleRE = /^& /;
 const mediaQueryRE = /^@/;
 const pseudoElementRE = /^:/;
+const nonLocalClassNameRE = /^\./;
 
 import { buildCSSRule } from "./utils/buildCSSRule";
 
@@ -28,11 +29,16 @@ export function compileJSS(jss: JSSStyleSheet, prefix: string) {
   });
 
   function compileClass(key: string, rule: Rule) {
-    const name = className(key);
-    classNames[key] = name;
+    let selector: string = null;
 
-    const selector = `.${name}`
+    if(!nonLocalClassNameRE.test(key)) {
+      const name = className(key);
+      classNames[key] = name;
 
+      selector = `.${name}`
+    } else {
+      selector = key;
+    }
 
     const selfRules: JSSStyleSheet = {};
     const pseudoElements: JSSStyleSheet = {};
@@ -94,8 +100,12 @@ export function compileJSS(jss: JSSStyleSheet, prefix: string) {
     });
   }
 
-  function className(name: string) {
-    return `${prefix}_${name}`
+  function className(name: string): string {
+    if (prefix) {
+      return `${prefix}_${name}`
+    } else {
+      return name;
+    }
   }
 
 

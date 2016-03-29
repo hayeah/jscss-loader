@@ -18,7 +18,8 @@
     "global-shim.d.ts",
     "sandbox.ts",
     "utils/buildCSSRule.ts",
-    "jss.ts"
+    "jss.ts",
+    "jss_test.ts"
 
   ]
 }
