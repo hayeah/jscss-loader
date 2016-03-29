@@ -1,4 +1,6 @@
-.test_b, .test_c, .d {
+.test_b,
+.test_c,
+.d {
   margin: 1px;
   padding: 2px;
 }

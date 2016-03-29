@@ -1,0 +1,6 @@
+.test_a {
+  padding: 1px;
+}
+.test_a .b {
+  padding: 2px;
+}

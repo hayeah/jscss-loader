@@ -18,7 +18,10 @@
     "sandbox.ts",
     "utils/buildCSSRule.ts",
     "jss.ts",
-    "jss_test.ts"
+    "jss_test.ts",
+    "generateScopeSelectors.ts",
+    "generateScopeSelectors_test.ts"
+
 
   ]
 }

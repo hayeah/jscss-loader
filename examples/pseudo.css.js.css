@@ -1,0 +1,14 @@
+.a {
+  padding: 1px;
+}
+.a .b,
+.a .c {
+  padding: 1px;
+}
+.a:hover {
+  padding: 2px;
+}
+.a:hover .b,
+.a:hover .c {
+  padding: 2px;
+}

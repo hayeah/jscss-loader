@@ -1,0 +1,20 @@
+.a,
+.a2 {
+  padding: 1px;
+}
+.a .b,
+.a2 .b {
+  padding: 1px;
+}
+@media (max-width: 1) {
+  .a,
+  .a2 {
+    padding: 2px;
+  }
+}
+@media (max-width: 1) {
+  .a .b,
+  .a2 .b {
+    padding: 2px;
+  }
+}

@@ -1,0 +1,8 @@
+.test_a {
+}
+.test_a h1,
+.test_a > p,
+.test_a :last-child,
+.test_a [name=foo] {
+  padding: 1px;
+}

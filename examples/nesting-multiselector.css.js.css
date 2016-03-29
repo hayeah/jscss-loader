@@ -1,0 +1,20 @@
+.a,
+.b {
+  padding: 1px;
+}
+.a .a2,
+.a .b2,
+.b .a2,
+.b .b2 {
+  padding: 2px;
+}
+.a .a2 h1,
+.a .a2 h2,
+.a .b2 h1,
+.a .b2 h2,
+.b .a2 h1,
+.b .a2 h2,
+.b .b2 h1,
+.b .b2 h2 {
+  padding: 3px;
+}

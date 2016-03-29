@@ -1,0 +1,19 @@
+.test_a,
+.test_b {
+  margin: 1px;
+  padding: 1px;
+}
+@media (max-width: 2) {
+  .test_a,
+  .test_b {
+    margin: 2px;
+    padding: 2px;
+  }
+}
+@media (max-width: 3) {
+  .test_a,
+  .test_b {
+    margin: 3px;
+    padding: 3px;
+  }
+}

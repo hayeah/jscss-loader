@@ -1,0 +1,12 @@
+.a {
+  padding: 1px;
+}
+.a .b {
+  padding: 1px;
+}
+.a[name=foo] {
+  padding: 2px;
+}
+.a[name=foo] .b {
+  padding: 2px;
+}

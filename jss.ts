@@ -4,13 +4,15 @@ type Value = number | string | Rule
 
 type Rule = { [key: string]: Value };
 
-const selfRuleRE = /^& /;
+const selfRuleRE = /^&/;
 const mediaQueryRE = /^@/;
-const pseudoElementRE = /^:/;
+// pseudo element or attribute matcher
+const attachedSelectorRE = /^[:\[]/;
 const nonLocalClassNameRE = /^\./;
 const multiSelectorRE = /,/;
 
 import { buildCSSRule } from "./utils/buildCSSRule";
+import { generateScopeSelectors } from "./generateScopeSelectors";
 
 function foreach<T>(dict: { [key: string]: T }, fn: (value: T, key: string) => void) {
   for(let key of Object.keys(dict)) {
@@ -18,10 +20,13 @@ function foreach<T>(dict: { [key: string]: T }, fn: (value: T, key: string) => v
   }
 }
 
+
+
 export function compileJSS(jss: JSSStyleSheet, prefix: string) {
   let css = [];
   let indent = 0;
-  let parents = [];
+  let cssScope: string[][] = [];
+  let scopeMediaQuery: string = null;
 
   let classNames: { [key: string]: string } = {};
 
@@ -29,7 +34,7 @@ export function compileJSS(jss: JSSStyleSheet, prefix: string) {
     compileRule(key, rule);
   });
 
-  function compileRule(key: string, rule: Rule) {
+  function compileRule(key: string, rule: Rule, indent: string = "") {
     let selectors: string[] = [];
 
 
@@ -41,7 +46,9 @@ export function compileJSS(jss: JSSStyleSheet, prefix: string) {
 
     // rename local classes
     selectors = selectors.map(selector => {
-      if(nonLocalClassNameRE.test(selector)) {
+      if(selfRuleRE.test(selector)) {
+        return selector.slice(1).trim();
+      } else if(nonLocalClassNameRE.test(selector)) {
         return selector;
       } else {
         const localName = className(selector);
@@ -51,20 +58,26 @@ export function compileJSS(jss: JSSStyleSheet, prefix: string) {
       }
     });
 
-    const selfRules: JSSStyleSheet = {};
-    const pseudoElements: JSSStyleSheet = {};
+    const nestRules: JSSStyleSheet = {};
+    const attachedSelectors: JSSStyleSheet = {};
+    const mediaQueries: JSSStyleSheet = {};
 
 
     const properties: Rule = {};
 
     foreach(rule, (value, key) => {
-      if (selfRuleRE.test(key)) {
-        selfRules[key] = value as Rule;
-        return;
-      }
+      if(typeof value === "object") {
+        if (attachedSelectorRE.test(key)) {
+          attachedSelectors[key] = value as Rule;
+          return;
+        }
 
-      if (pseudoElementRE.test(key)) {
-        pseudoElements[key] = value as Rule;
+        if (mediaQueryRE.test(key)) {
+          mediaQueries[key] = value;
+          return;
+        }
+
+        nestRules[key] = value;
         return;
       }
 
@@ -73,13 +86,36 @@ export function compileJSS(jss: JSSStyleSheet, prefix: string) {
     });
 
     // const selector = selectors.join(", ")
+    cssScope.push(selectors);
+    outputProperties(properties, indent);
+    cssScope.pop();
 
-    outputRule(selectors.join(", "), properties);
-
-    foreach(pseudoElements, (rule, pseudo) => {
-      let multiSelector = selectors.map(selector => `${selector}${pseudo}`).join("," )
-      outputRule(multiSelector, rule);
+    cssScope.push(selectors);
+    foreach(nestRules, (rule, key) => {
+      compileRule(key, rule, indent);
     });
+    cssScope.pop();
+
+    // pseudo element or attribute that should be attached to the current selector
+    foreach(attachedSelectors, (rule, attachment) => {
+      cssScope.push(selectors.map(selector => `${selector}${attachment}`));
+      let nestedRules = outputProperties(rule, indent);
+      foreach(nestedRules, (rule, key) => {
+        compileRule(key, rule, indent);
+      });
+      cssScope.pop();
+    });
+
+    foreach(mediaQueries, (rule, mediaQuery) => {
+      let _scopeMediaQuery = scopeMediaQuery;
+      scopeMediaQuery = mediaQuery;
+
+      // recurse into media query using current selector scope
+      compileRule(key, rule, indent + "  ");
+
+      scopeMediaQuery = _scopeMediaQuery;
+    });
+
 
     // foreach(selfRules, (rule, key) => {
     //   const childSelector = key.slice(2);
@@ -91,26 +127,32 @@ export function compileJSS(jss: JSSStyleSheet, prefix: string) {
     //  css.push(`${selectorFor(key)}`)
   }
 
-  function outputRule(selector: string, rule: Rule, indent: string = "") {
-    const mediaQueries: JSSStyleSheet = {};
-    css.push(`${indent}${selector} {`)
-    foreach(rule, (value: Value, key) => {
+  function outputProperties(rule: Rule, indent: string = "") {
+    const nestRules: JSSStyleSheet = {};
 
-      if (mediaQueryRE.test(key)) {
-        mediaQueries[key] = value as Rule;
+    let selectors = generateScopeSelectors(cssScope)
+      .map(selector => `${indent}${selector}`);
+
+    if(scopeMediaQuery) {
+      css.push(`${scopeMediaQuery} {`);
+    }
+
+    css.push(`${selectors.join(",\n")} {`)
+    foreach(rule, (value: Value, key) => {
+      // todo: throw away objects
+      if(typeof value === "object") {
+        nestRules[key] = value;
         return;
       }
-
-      // todo: throw away objects
       css.push(indent + "  " + buildCSSRule(key, value))
     });
     css.push(`${indent}}`)
 
-    foreach(mediaQueries, (rule, mediaQuery) => {
-      css.push(`${mediaQuery} {`);
-      outputRule(selector, rule, indent + "  ");
+    if(scopeMediaQuery) {
       css.push("}");
-    });
+    }
+
+    return nestRules;
   }
 
   function className(name: string): string {
