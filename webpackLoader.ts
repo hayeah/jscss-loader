@@ -1,6 +1,6 @@
 "use strict";
 
-import { compileJSS } from "./compileJSS";
+import { compileJSS } from "./jss";
 
 import * as path from "path";
 
@@ -16,9 +16,11 @@ import "./ts-require";
 export function webpackLoader(content: string) {
   this.cacheable();
 
-  const { context, resourcePath, request } = this as LoaderContext;
+  const projectRoot = this._compiler.context;
 
-  const modulePath = path.relative(context, resourcePath)
+  const { resourcePath, request } = this as LoaderContext;
+
+
 
   // Reset require cache to empty to reload everything.
   const oldCache = Module._cache;
@@ -45,9 +47,12 @@ export function webpackLoader(content: string) {
   // CommonJS & ES6 compat
   const jss = mod.default || mod;
 
-  const moduleName = modulePath.replace(/\.css\.(ts|js)$/,"");
+  let modulePath = path.relative(projectRoot, resourcePath)
+  modulePath = modulePath.replace(/\.css\.(ts|js)$/,"");
+  modulePath = modulePath.replace(/\//g,"_");
+  modulePath = modulePath.replace(/[\. ]$/,"-");
 
-  const { css, classes } = compileJSS(jss, moduleName);
+  const { output: css, classNames: classes } = compileJSS(jss, modulePath);
 
   cssChunks[request] = css;
 

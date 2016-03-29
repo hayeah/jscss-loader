@@ -1,1 +1,0 @@
-Derived from https://github.com/martinandert/react-inline
